@@ -2,7 +2,7 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database.db import init_db
+from landscape_lab.database.db import init_db
 from controllers import (
     user_controller,
     plant_controller,
