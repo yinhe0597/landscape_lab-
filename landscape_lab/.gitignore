@@ -20,7 +20,11 @@ wheels/
 .installed.cfg
 *.egg
 
-# Environments
+# Database
+*.db
+*.sqlite3
+
+# Environment
 .env
 .venv
 env/
@@ -29,13 +33,13 @@ ENV/
 env.bak/
 venv.bak/
 
-# Database
-*.sqlite
-*.db
-
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
 
 # Logs
 *.log

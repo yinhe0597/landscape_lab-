@@ -1,22 +1,11 @@
-from datetime import datetime
-from typing import Optional
+from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
-from sqlalchemy import Column, DateTime
-from sqlalchemy.sql import func
-from database.db import Base
+@as_declarative()
+class Base:
+    """基础模型类"""
+    __name__: str
 
-class BaseModel(Base):
-    """所有模型的基类"""
-    __abstract__ = True
-
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
-    deleted_at = Column(DateTime, nullable=True)
-
-    def soft_delete(self):
-        """软删除"""
-        self.deleted_at = datetime.utcnow()
-
-    def restore(self):
-        """恢复删除"""
-        self.deleted_at = None
+    @declared_attr
+    def __tablename__(cls) -> str:
+        """自动生成表名"""
+        return cls.__name__.lower()

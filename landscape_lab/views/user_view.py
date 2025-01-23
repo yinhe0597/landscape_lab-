@@ -1,66 +1,59 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from typing import List
 
-from database.db import get_db
+from database import get_db
 from models.user import User
-from schemas.user import UserInDB
-from utils.security import decode_token
+from schemas.user import UserCreate, UserInDB, Token
+from utils.security import (
+    get_password_hash,
+    create_access_token,
+    get_current_user,
+    ACCESS_TOKEN_EXPIRE_MINUTES
+)
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["users"])
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-@router.get("/users/{user_id}", response_model=UserInDB)
-async def read_user(user_id: int, db: Session = Depends(get_db)):
-    """获取指定用户信息"""
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-@router.put("/users/{user_id}", response_model=UserInDB)
-async def update_user(
-    user_id: int, 
-    user_update: UserUpdate, 
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
-):
-    """更新用户信息"""
-    payload = decode_token(token)
-    if payload is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
+@router.post("/", response_model=UserInDB)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    """创建新用户"""
+    db_user = db.query(User).filter(User.username == user.username).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="用户名已存在")
     
-    db_user = db.query(User).filter(User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    if user_update.username:
-        db_user.username = user_update.username
-    if user_update.email:
-        db_user.email = user_update.email
-    if user_update.password:
-        db_user.hashed_password = get_password_hash(user_update.password)
-    
+    hashed_password = get_password_hash(user.password)
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-@router.delete("/users/{user_id}")
-async def delete_user(
-    user_id: int,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
+@router.post("/token", response_model=Token)
+def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
 ):
-    """删除用户"""
-    payload = decode_token(token)
-    if payload is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    """用户登录获取访问令牌"""
+    user = db.query(User).filter(User.username == form_data.username).first()
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=400,
+            detail="用户名或密码错误"
+        )
     
-    db_user = db.query(User).filter(User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    db.delete(db_user)
-    db.commit()
-    return {"message": "User deleted successfully"}
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, 
+        expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/me", response_model=UserInDB)
+def read_users_me(current_user: User = Depends(get_current_user)):
+    """获取当前用户信息"""
+    return current_user

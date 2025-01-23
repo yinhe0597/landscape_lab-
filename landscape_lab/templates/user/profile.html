@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 风景园林实训系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="profile-container">
+        <h2>个人中心</h2>
+        <div class="profile-info">
+            <div class="info-item">
+                <span class="label">用户名：</span>
+                <span class="value">{{ user.username }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">邮箱：</span>
+                <span class="value">{{ user.email }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">注册时间：</span>
+                <span class="value">{{ user.created_at }}</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <h3>账户操作</h3>
+            <ul>
+                <li><a href="/api/users/change-password">修改密码</a></li>
+                <li><a href="/api/users/logout">退出登录</a></li>
+            </ul>
+        </div>
+
+        <div class="projects">
+            <h3>我的项目</h3>
+            <div class="project-list">
+                {% if user.projects %}
+                    {% for project in user.projects %}
+                        <div class="project-item">
+                            <h4>{{ project.name }}</h4>
+                            <p>创建时间：{{ project.created_at }}</p>
+                            <a href="/projects/{{ project.id }}" class="btn-view">查看详情</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-projects">暂无项目</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/profile.js"></script>
+</body>
+</html>

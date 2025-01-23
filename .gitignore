@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+venv/
+env/
+
+# Database
+*.db
+*.sqlite
+
+# Environment
+.env
+.venv
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# System
+.DS_Store
+Thumbs.db
+
+# 测试排除现有冲突文件
+/models/__pycache__/
+/controllers/__pycache__/
+/views/__pycache__/
