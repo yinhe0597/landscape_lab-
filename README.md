@@ -1,3 +1,98 @@
+# Landscape Lab - Landscape Architecture Training Laboratory Data Management Platform
+
+## Project Overview
+This project is a comprehensive data management platform developed for landscape architecture training laboratories. Designed with a modular architecture, it integrates core functionalities including plant/material database management, 3D model parsing, and project data analysis.
+
+## Directory Structure
+```
+landscape_lab/
+├── models/              # Data model layer
+│   ├── plant.py         # Plant data model
+│   ├── material.py      # Building material model
+│   ├── project.py       # Project data model
+│   └── user.py          # User management model
+├── controllers/         # Business logic layer
+│   ├── plant_controller.py    # Plant management logic
+│   ├── material_controller.py # Material management logic
+│   └── project_controller.py  # Project control logic
+├── views/               # Presentation layer
+│   ├── plant_view.py    # Plant data visualization
+│   ├── material_view.py # Material data visualization
+│   └── project_view.py  # 3D project visualization
+├── utils/               # Utility modules
+│   ├── file_utils.py    # File processing tools
+│   ├── analysis_utils.py# Data analysis tools
+│   └── security.py      # Security authentication
+├── database/            # Database management
+│   └── db.py            # SQLite database connection
+├── static/              # Static resources
+│   ├── css/             # Stylesheets
+│   └── js/              # Frontend scripts
+├── templates/           # Web templates
+└── requirements.txt     # Dependency list
+```
+
+## Core Features
+### ✅ Implemented Features
+1. **Basic Data Management**
+   - Plant/Material database (SQLite)
+   - Auto-generated thumbnails (Pillow integration)
+   - CSV/Excel import/export
+
+2. **3D Model Parsing**
+   - FBX/OBJ model parsing
+   - Plant coordinate/size extraction
+   - Material information analysis
+
+3. **Analysis Tools**
+   - Plant distribution statistics
+   - Sunlight/shadow simulation (Three.js integration)
+   - Project version comparison
+
+4. **User System**
+   - JWT token authentication
+   - Role-based access control
+   - Operation logging
+
+## Installation & Usage
+```bash
+# Clone repository
+git clone https://github.com/yourrepo/landscape_lab.git
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Initialize database
+python database/db.py --init
+
+# Start the system
+python main.py
+```
+
+## Roadmap
+### Short-term Plan
+1. **Performance Optimization**
+   - Chunked processing for large files
+   - Model parsing cache mechanism
+   - Asynchronous task queue support
+
+2. **Feature Expansion**
+   - Enhanced BIM model compatibility
+   - Rainwater runoff simulation module
+   - Plant growth prediction algorithm
+
+3. **Collaboration Features**
+   - Multi-user collaborative annotation
+   - Version merge conflict resolution
+   - Real-time commenting system
+
+### Long-term Vision
+- AR live preview integration
+- GIS system integration
+- Mobile companion app development
+
+---
+
 # Landscape Lab 风景园林实训室数据管理平台
 
 ## 项目简介
